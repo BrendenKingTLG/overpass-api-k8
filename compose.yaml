@@ -16,3 +16,4 @@ services:
       - OVERPASS_USE_AREAS=false
       - OVERPASS_RULES_LOAD=-1
       - OVERPASS_STOP_AFTER_INIT=false
+      - OVERPASS_USE_AREAS=true
