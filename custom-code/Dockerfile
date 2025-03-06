@@ -94,18 +94,33 @@ RUN chmod a+rx /app/docker-entrypoint.sh /app/bin/update_overpass.sh /app/bin/ru
 ENV OVERPASS_RULES_LOAD=${OVERPASS_RULES_LOAD:-1}
 ENV OVERPASS_USE_AREAS=${ENV_OVERPASS_USE_AREAS:-true}
 ENV OVERPASS_ALLOW_DUPLICATE_QUERIES=no
+ENV OVERPASS_SOCKET_DIR=/app/socket
 
 EXPOSE 80
+
 RUN chmod -R 777 /app /db 
+
 RUN mkdir -p /app/socket && \
     chmod 777 /app/socket && \
     chown -R overpass:overpass /app/socket
+
+RUN mkdir -p /app/db/diffs && \
+    chmod 777 /app/db/diffs && \
+    chown -R overpass:overpass /app/db/diffs
+
+RUN touch /app/db/replicate_id && \
+    chmod 777 /app/db/replicate_id && \
+    chown -R overpass:overpass /app/db/replicate_id
+
 HEALTHCHECK --start-period=48h CMD /app/docker-healthcheck.sh
+
 RUN mkdir -p /var/lib/nginx/body && \
     chown -R overpass:overpass /var/lib/nginx && \
     chown -R overpass:overpass /nginx && \
     chown -R overpass:overpass /var/lib/nginx
+
 RUN mkdir -p /app/db && chown -R overpass:overpass /app/db
+
 USER 1001
 
 CMD ["/app/docker-entrypoint.sh"]

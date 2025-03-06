@@ -5,6 +5,7 @@ worker_processes  auto;
 
 pid        /tmp/nginx.pid;
 
+env OVERPASS_SOCKET_DIR;
 
 events {
     worker_connections  1024;
@@ -14,7 +15,6 @@ events {
 http {
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
-
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
