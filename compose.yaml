@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   overpass:
     container_name: overpass
@@ -17,3 +18,4 @@ services:
       - OVERPASS_RULES_LOAD=-1
       - OVERPASS_STOP_AFTER_INIT=false
       - OVERPASS_USE_AREAS=true
+    entrypoint: ["/bin/sh", "-c", "/app/api-entrypoint.sh"]

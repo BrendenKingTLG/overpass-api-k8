@@ -86,7 +86,7 @@ COPY etc/nginx-overpass.conf.template /etc/nginx/nginx.conf
 
 COPY bin/update_overpass.sh bin/update_overpass_loop.sh bin/rules_loop.sh bin/dispatcher_start.sh bin/start_fcgiwarp.sh /app/bin/
 
-COPY docker-entrypoint.sh docker-healthcheck.sh /app/
+COPY ./*-entrypoint.sh ./docker-healthcheck.sh /app/
 
 RUN chmod a+rx /app/docker-entrypoint.sh /app/bin/update_overpass.sh /app/bin/rules_loop.sh /app/bin/dispatcher_start.sh \
     /app/bin/oauth_cookie_client.py /app/bin/start_fcgiwarp.sh
@@ -96,7 +96,16 @@ ENV OVERPASS_USE_AREAS=${ENV_OVERPASS_USE_AREAS:-true}
 ENV OVERPASS_ALLOW_DUPLICATE_QUERIES=no
 
 EXPOSE 80
-RUN chmod -R 777 /app /db
+RUN chmod -R 777 /app /db 
+RUN mkdir -p /app/socket && \
+    chmod 777 /app/socket && \
+    chown -R overpass:overpass /app/socket
 HEALTHCHECK --start-period=48h CMD /app/docker-healthcheck.sh
+RUN mkdir -p /var/lib/nginx/body && \
+    chown -R overpass:overpass /var/lib/nginx && \
+    chown -R overpass:overpass /nginx && \
+    chown -R overpass:overpass /var/lib/nginx
+RUN mkdir -p /app/db && chown -R overpass:overpass /app/db
+USER 1001
 
 CMD ["/app/docker-entrypoint.sh"]

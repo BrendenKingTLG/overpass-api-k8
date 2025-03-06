@@ -2,4 +2,4 @@ init:
 	cp -r custom-code/* overpass/
 
 start:
-	docker compose up
+	docker compose up --build --remove-orphans
