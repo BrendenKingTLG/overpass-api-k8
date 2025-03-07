@@ -24,11 +24,16 @@ while [ "$CURL_STATUS_CODE" = "429" ]; do
     CURL_STATUS_CODE=$(curl -L -b /app/db/cookie.jar -o /db/planet.osm.bz2 -w "%{http_code}" "${OVERPASS_PLANET_URL}")
 done
 
-if [[ ! -f /db/init_done ]]; then
+if [[ ! -f /app/db/db-done ]]; then
     /app/bin/init_osm3s.sh /db/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /db/planet.osm.bz2)" &&
     touch /app/db/db-done
-    
+fi
+if [[ ! -f /app/db/replicate_id ]]; then
+    echo "Initializing replicate_id..."
+    echo "${TARGET_SEQUENCE_NUMBER}" > /app/db/replicate_id
+    chown overpass:overpass /app/db/replicate_id
+    chmod 644 /app/db/replicate_id
 fi
 /app/bin/update_overpass_loop.sh -O /db/planet.osm.bz2 &
-/app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
+# /app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
 wait

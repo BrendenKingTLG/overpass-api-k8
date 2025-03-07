@@ -32,11 +32,12 @@ services:
     environment:
       - OVERPASS_META=no
       - OVERPASS_MODE=init
-      - OVERPASS_PLANET_URL=http://download.geofabrik.de/europe/monaco-latest.osm.bz2
-      - OVERPASS_DIFF_URL=http://download.geofabrik.de/europe/monaco-updates
+      - OVERPASS_PLANET_URL=https://download.geofabrik.de/europe/monaco-latest.osm.bz2
+      - OVERPASS_DIFF_URL=https://download.geofabrik.de/europe/monaco-updates
       - OVERPASS_UPDATE_SLEEP=3600
       - OVERPASS_USE_AREAS=false
       - OVERPASS_RULES_LOAD=-1
       - OVERPASS_STOP_AFTER_INIT=false
       - OVERPASS_USE_AREAS=true
+      - TARGET_SEQUENCE_NUMBER=4349
     entrypoint: ["/bin/sh", "-c", "/app/data-entrypoint.sh"]
