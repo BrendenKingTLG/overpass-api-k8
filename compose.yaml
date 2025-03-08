@@ -9,7 +9,7 @@ services:
     ports:
       - 12345:80
     volumes:
-      - ./mounts/db:/app/db
+      - /Volumes/My Passport/db:/app/db
     environment:
       - OVERPASS_META=no
       - OVERPASS_MODE=init
@@ -28,7 +28,8 @@ services:
       context: ./overpass
       dockerfile: Dockerfile
     volumes:
-      - ./mounts/db:/app/db
+      - /Volumes/My Passport/db:/app/db
+      - /Volumes/My Passport/data:/data
     environment:
       - OVERPASS_META=no
       - OVERPASS_MODE=init

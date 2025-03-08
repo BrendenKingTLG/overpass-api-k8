@@ -17,15 +17,8 @@ echo "Starting dispatcher for areas..."
 sleep 10
 
 echo "Generating db..."
-CURL_STATUS_CODE=$(curl -L -b /app/db/cookie.jar -o /db/planet.osm.bz2 -w "%{http_code}" "${OVERPASS_PLANET_URL}")
-while [ "$CURL_STATUS_CODE" = "429" ]; do
-    echo "Server responded with 429 Too many requests. Trying again in 5 minutes..."
-    sleep 300
-    CURL_STATUS_CODE=$(curl -L -b /app/db/cookie.jar -o /db/planet.osm.bz2 -w "%{http_code}" "${OVERPASS_PLANET_URL}")
-done
-
 if [[ ! -f /app/db/db-done ]]; then
-    /app/bin/init_osm3s.sh /db/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /db/planet.osm.bz2)" &&
+    /app/bin/init_osm3s.sh /data/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /db/planet.osm.bz2)" &&
     touch /app/db/db-done
 fi
 if [[ ! -f /app/db/replicate_id ]]; then
