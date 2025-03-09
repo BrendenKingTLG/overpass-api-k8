@@ -27,6 +27,8 @@ if [[ ! -f /app/db/replicate_id ]]; then
     chown overpass:overpass /app/db/replicate_id
     chmod 644 /app/db/replicate_id
 fi
+
+echo "Starting updater..."
 /app/bin/update_overpass_loop.sh -O /db/planet.osm.bz2 &
-# /app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
+/app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
 wait
