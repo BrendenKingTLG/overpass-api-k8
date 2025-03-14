@@ -8,8 +8,6 @@ if [[ "$LATEST_SEQUENCE" -le "$CURRENT_SEQUENCE" ]]; then
     exit 0
 fi
 rm /app/db/*shadow.lock
-# TODO: split to two files - one with while loop for unattended use
-# one for updating to current state - second called by first
 
 DIFF_FILE=/app/db/diffs/changes.osc
 
