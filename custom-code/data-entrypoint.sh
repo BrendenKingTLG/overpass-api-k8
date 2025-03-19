@@ -17,18 +17,18 @@ echo "Starting dispatcher for areas..."
 sleep 10
 
 echo "Generating db..."
-CURL_STATUS_CODE=$(curl -L -b /app/db/cookie.jar -o /db/planet.osm.bz2 -w "%{http_code}" "${OVERPASS_PLANET_URL}")
-while [ "$CURL_STATUS_CODE" = "429" ]; do
-    echo "Server responded with 429 Too many requests. Trying again in 5 minutes..."
-    sleep 300
-    CURL_STATUS_CODE=$(curl -L -b /app/db/cookie.jar -o /db/planet.osm.bz2 -w "%{http_code}" "${OVERPASS_PLANET_URL}")
-done
-
-if [[ ! -f /db/init_done ]]; then
-    /app/bin/init_osm3s.sh /db/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /db/planet.osm.bz2)" &&
+if [[ ! -f /app/db/db-done ]]; then
+    /app/bin/init_osm3s.sh /data/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /data/planet.osm.bz2)" &&
     touch /app/db/db-done
-    
 fi
-/app/bin/update_overpass_loop.sh -O /db/planet.osm.bz2 &
-/app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
+if [[ ! -f /app/db/replicate_id ]]; then
+    echo "Initializing replicate_id..."
+    echo "${TARGET_SEQUENCE_NUMBER}" > /app/db/replicate_id
+    chown overpass:overpass /app/db/replicate_id
+    chmod 644 /app/db/replicate_id
+fi
+
+echo "Starting updater..."
+/app/bin/update_overpass_loop.sh -O /data/planet.osm.bz2 &
+/app/bin/rules_loop.sh /app/db "$OVERPASS_RULES_LOAD"
 wait

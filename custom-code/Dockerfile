@@ -63,6 +63,7 @@ RUN apt-get update \
     python3-venv \
     supervisor \
     wget \
+    libxml2-utils \
     zlib1g \
     && rm -rf /var/lib/apt/lists/*
 
