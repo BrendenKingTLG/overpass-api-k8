@@ -1,10 +1,10 @@
 #!/bin/bash
 
-LATEST_SEQUENCE=$(curl -s "${OVERPASS_DIFF_URL}/state.txt" | grep sequenceNumber | cut -d'=' -f2)
+LATEST_SEQUENCE=$(curl -sL "${OVERPASS_DIFF_URL}/state.txt" | grep -m1 sequenceNumber | cut -d'=' -f2 | tr -d '[:space:]')
 CURRENT_SEQUENCE=$(cat /app/db/replicate_id)
 
 if [[ "$LATEST_SEQUENCE" -le "$CURRENT_SEQUENCE" ]]; then
-    echo "No new updates available. Current: $CURRENT_SEQUENCE, Latest: $LATEST_SEQUENCE"
+    echo "No new osm updates available. Current: $CURRENT_SEQUENCE, Latest: $LATEST_SEQUENCE"
     exit 0
 fi
 rm /app/db/*shadow.lock
@@ -73,10 +73,10 @@ fi
 		rm "${DIFF_FILE}"
 
 		if [[ "${OSMIUM_STATUS}" -eq 3 ]]; then
-			echo "Update finished with status code: ${OSMIUM_STATUS}"
+			echo "OSM Update finished with status code: ${OSMIUM_STATUS}"
 			break
 		else
-			echo "There are still some updates remaining"
+			echo "There are still some OSM updates remaining"
 			continue
 		fi
 		break

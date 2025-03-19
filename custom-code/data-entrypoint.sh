@@ -18,7 +18,7 @@ sleep 10
 
 echo "Generating db..."
 if [[ ! -f /app/db/db-done ]]; then
-    /app/bin/init_osm3s.sh /data/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /db/planet.osm.bz2)" &&
+    /app/bin/init_osm3s.sh /data/planet.osm.bz2 /app/db /app --meta=yes "--version=$(osmium fileinfo -e -g data.timestamp.last /data/planet.osm.bz2)" &&
     touch /app/db/db-done
 fi
 if [[ ! -f /app/db/replicate_id ]]; then
@@ -29,6 +29,6 @@ if [[ ! -f /app/db/replicate_id ]]; then
 fi
 
 echo "Starting updater..."
-/app/bin/update_overpass_loop.sh -O /db/planet.osm.bz2 &
-/app/bin/osm3s_query --progress --rules --db-dir=/app/db < /app/etc/rules/areas.osm3s &
+/app/bin/update_overpass_loop.sh -O /data/planet.osm.bz2 &
+/app/bin/rules_loop.sh /app/db "$OVERPASS_RULES_LOAD"
 wait
