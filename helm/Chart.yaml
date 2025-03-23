@@ -1,0 +1,11 @@
+apiVersion: v2
+name: overpass-k8s
+description: A Helm chart for deploying overpass to a kubernetes cluster
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Brenden King
+    email: brendenking18@outlook.com
+sources:
+  - https://github.com/BrendenKingTLG/overpass-api-k8

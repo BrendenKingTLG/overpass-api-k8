@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        env:
+{{- range $key, $value := .Values.api.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+{{- end }}
+        command: {{ toJson .Values.api.command }}
+        args: {{ toJson .Values.api.args }}
+        volumeMounts:
+          - name: db-volume
+            mountPath: /app/db
+          - name: data-volume
+            mountPath: /data
+      volumes:
+        - name: db-volume
+          hostPath:
+            path: {{ .Values.volumes.dbHostPath }}
+            type: Directory
+        - name: data-volume
+          hostPath:
+            path: {{ .Values.volumes.dataHostPath }}
+            type: Directory

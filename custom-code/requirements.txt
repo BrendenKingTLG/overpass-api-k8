@@ -1,2 +1,2 @@
 osmium~=4.0.0
-requests
+requests==2.32.3
