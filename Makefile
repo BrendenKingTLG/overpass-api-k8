@@ -18,8 +18,8 @@ clean:
 build: copy
 	docker build --progress=plain -t $(IMAGE_NAME) ./overpass
 
-deploy: copy build
+install: copy build
 	helm upgrade --install overpass-k8s ./helm
 
-helm-delete:
+uninstall:
 	helm uninstall overpass-k8s
