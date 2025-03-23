@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingestor
+spec:
+  selector:
+    matchLabels:
+      app: ingestor
+  template:
+    metadata:
+      labels:
+        app: ingestor
+    spec:
+      containers:
+      - name: ingestor
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+{{- range $key, $value := .Values.ingestor.env }}
+          - name: {{ $key }}
+            value: "{{ $value }}"
+{{- end }}
+        command: {{ toJson .Values.ingestor.command }}
+        args: {{ toJson .Values.ingestor.args }}
+        volumeMounts:
+          - name: db-volume
+            mountPath: /app/db
+          - name: data-volume
+            mountPath: /data
+      volumes:
+        - name: db-volume
+          hostPath:
+            path: {{ .Values.volumes.dbHostPath }}
+            type: Directory
+        - name: data-volume
+          hostPath:
+            path: {{ .Values.volumes.dataHostPath }}
+            type: Directory

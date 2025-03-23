@@ -1,0 +1,38 @@
+replicaCount: 3
+
+image:
+  repository: overpass-k8s
+  tag: latest
+  pullPolicy: IfNotPresent
+
+api:
+  env:
+    OVERPASS_META: "no"
+    OVERPASS_MODE: "init"
+    OVERPASS_UPDATE_SLEEP: "3600"
+    OVERPASS_RULES_LOAD: "-1"
+    OVERPASS_STOP_AFTER_INIT: "false"
+    OVERPASS_USE_AREAS: "true"
+  command: ["/bin/sh", "-c"]
+  args: ["/app/api-entrypoint.sh"]
+
+ingestor:
+  env:
+    OVERPASS_META: "no"
+    OVERPASS_MODE: "init"
+    OVERPASS_DIFF_URL: "https://download.geofabrik.de/north-america/us/missouri-updates/"
+    OVERPASS_UPDATE_SLEEP: "3600"
+    OVERPASS_RULES_LOAD: "-1"
+    OVERPASS_STOP_AFTER_INIT: "false"
+    OVERPASS_USE_AREAS: "true"
+    TARGET_SEQUENCE_NUMBER: "4237"
+  command: ["/bin/sh", "-c"]
+  args: ["/app/data-entrypoint.sh"]
+
+volumes:
+  dbHostPath: /Users/brendenking/overpass/mounts/db
+  dataHostPath: /Users/brendenking/overpass/mounts/data
+
+service:
+  type: NodePort
+  port: 80

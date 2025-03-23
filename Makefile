@@ -1,20 +1,25 @@
-init: 
-	cp -r custom-code/* overpass/
-	make download-pbf
+PBF_URL ?= https://download.geofabrik.de/north-america/us/missouri-latest.osm.bz2
+PBF_FILE = ./mounts/data/planet.osm.bz2
+IMAGE_NAME = overpass-k8s:latest
 
-start:
-	docker compose up --build --remove-orphans
+.PHONY: init copy download-pbf clean build kind-load deploy helm-delete
 
-stop:
-	docker compose down
+init: copy download-pbf
 
 copy:
 	cp -r custom-code/* overpass/
 
 download-pbf:
-	wget -O ./mounts/data/planet.osm.bz2 https://download.geofabrik.de/north-america/us/missouri-latest.osm.bz2
+	wget -O $(PBF_FILE) $(PBF_URL)
 
 clean:
-	rm -r ./mounts/db/* 2>/dev/null || echo "No files to remove"
+	rm -rf ./mounts/db/* 2>/dev/null || echo "No files to remove"
 
+build: copy
+	docker build --progress=plain -t $(IMAGE_NAME) ./overpass
 
+deploy: copy build
+	helm upgrade --install overpass-k8s ./helm
+
+helm-delete:
+	helm uninstall overpass-k8s
